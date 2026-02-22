@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Scroll Reveal
+    // Scroll Reveal Intersection Observer
     const sections = document.querySelectorAll('section');
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -13,28 +13,38 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(section);
     });
 
-    // Send Virtual Hug
+    // Send Virtual Hug - Minimalist Floating Hearts
     const hugBtn = document.getElementById('send-hug');
     hugBtn.addEventListener('click', () => {
         for (let i = 0; i < 15; i++) {
-            setTimeout(createHeart, i * 100);
+            setTimeout(createHeart, i * 150);
         }
-        alert('A big hug is coming your way! ❤');
+        hugBtn.style.boxShadow = '0 0 20px rgba(197, 160, 89, 0.4)';
+        setTimeout(() => { hugBtn.style.boxShadow = 'none'; }, 1000);
     });
 
     function createHeart() {
         const heart = document.createElement('div');
-        heart.classList.add('floating-heart');
         heart.innerHTML = '❤';
-        heart.style.left = Math.random() * 100 + 'vw';
-        heart.style.bottom = '0';
-        heart.style.fontSize = (Math.random() * 2 + 1) + 'rem';
-        heart.style.color = `hsl(${Math.random() * 360}, 100%, 75%)`;
+        heart.style.position = 'fixed';
+        heart.style.left = (Math.random() * 80 + 10) + 'vw';
+        heart.style.bottom = '-50px';
+        heart.style.fontSize = (Math.random() * 1.5 + 0.5) + 'rem';
+        heart.style.color = '#c98a7d';
+        heart.style.opacity = '0.5';
+        heart.style.zIndex = '3000';
+        heart.style.transition = 'all 4s linear';
+        heart.style.pointerEvents = 'none';
         document.body.appendChild(heart);
 
         setTimeout(() => {
+            heart.style.transform = `translateY(-110vh) translateX(${Math.random() * 100 - 50}px) rotate(${Math.random() * 360}deg)`;
+            heart.style.opacity = '0';
+        }, 50);
+
+        setTimeout(() => {
             heart.remove();
-        }, 3000);
+        }, 4000);
     }
 
     // Music Toggle
@@ -44,24 +54,29 @@ document.addEventListener('DOMContentLoaded', () => {
         if (audio.paused) {
             audio.play();
             musicBtn.textContent = 'Pause Our Song 🎵';
-            musicBtn.style.background = 'var(--sunset-pink)';
+            musicBtn.style.background = 'var(--rose)';
+            musicBtn.style.color = 'white';
         } else {
             audio.pause();
             musicBtn.textContent = 'Play Our Song 🎵';
-            musicBtn.style.background = 'var(--sunset-purple)';
+            musicBtn.style.background = 'transparent';
+            musicBtn.style.color = 'var(--text-main)';
         }
     });
 
-    // Open Letter
+    // Open Letter Slide Down
     const letterBtn = document.getElementById('open-letter');
     const letterDisplay = document.getElementById('letter-display');
     letterBtn.addEventListener('click', () => {
         letterDisplay.style.display = 'block';
-        letterDisplay.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => {
+            letterDisplay.style.opacity = '1';
+            letterDisplay.style.transform = 'translateY(0)';
+        }, 50);
         letterBtn.style.display = 'none';
     });
 
-    // Dark Mode
+    // Dark Mode Toggle
     const darkToggle = document.getElementById('dark-toggle');
     if (localStorage.getItem('dark-mode') === 'enabled') {
         document.body.classList.add('dark-mode');
@@ -69,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     darkToggle.addEventListener('click', () => {
+        document.body.classList.add('transition-theme');
         document.body.classList.toggle('dark-mode');
         const isDark = document.body.classList.contains('dark-mode');
         localStorage.setItem('dark-mode', isDark ? 'enabled' : 'disabled');
