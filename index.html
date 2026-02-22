@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I Miss You Every Day | For Maleena</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#story">Our Story</a></li>
+                <li><a href="#memories">Memories</a></li>
+                <li><a href="#hug">Digital Hug</a></li>
+                <li><a href="#gallery">Gallery</a></li>
+                <li><a href="#music">Music</a></li>
+                <li><a href="#letter">Open Letter</a></li>
+                <li><a href="#reasons">Reasons</a></li>
+                <li><a href="#promise">Our Promise</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header id="home" class="hero">
+        <div class="container">
+            <h1>I Miss You Every Day</h1>
+            <p>"Distance means so little when someone means so much. Thinking of you, your smile, and your warmth every single moment we're apart."</p>
+            <p style="margin-top: 20px; font-size: 1.1rem; opacity: 0.8;">Scroll down to see our world... ❤</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="story">
+            <h2 class="section-title">Our Story</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <span class="timeline-heart">❤</span>
+                    <div class="card">
+                        <h3>How We Met</h3>
+                        <p>A beautiful beginning that changed my life forever.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-heart">❤</span>
+                    <div class="card">
+                        <h3>Our First Chat</h3>
+                        <p>Hours felt like minutes as we started to know each other.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-heart">❤</span>
+                    <div class="card">
+                        <h3>The First Date</h3>
+                        <p>Butterflies in my stomach and a smile I'll never forget.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-heart">❤</span>
+                    <div class="card">
+                        <h3>Our Favorite Memory</h3>
+                        <p>The day we realized we were meant for each other.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="hug">
+            <h2 class="section-title">A Hug From Me To You</h2>
+            <div class="hug-card">
+                <p>I miss the way you smell, the sound of your voice, and the way you make me feel safe. Since I can't be there to hold you right now, here's a little piece of my heart.</p>
+                <button class="btn-hug" id="send-hug">Send Virtual Hug ❤</button>
+            </div>
+        </section>
+
+        <section id="gallery">
+            <h2 class="section-title">Our Captured Moments</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="img/gallery1.jpg" alt="First Selfie" onerror="this.src='https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=400&auto=format&fit=crop'">
+                    <div class="gallery-caption">Our First Selfie</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="img/gallery2.jpg" alt="Favorite Day" onerror="this.src='https://images.unsplash.com/photo-1511733847602-c2cd7469501d?q=80&w=400&auto=format&fit=crop'">
+                    <div class="gallery-caption">Our Favorite Day</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="img/gallery3.jpg" alt="Sunset with you" onerror="this.src='https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=400&auto=format&fit=crop'">
+                    <div class="gallery-caption">Watching Sunsets</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="img/gallery4.jpg" alt="Smiling together" onerror="this.src='https://images.unsplash.com/photo-1516589174184-c68d8e574af4?q=80&w=400&auto=format&fit=crop'">
+                    <div class="gallery-caption">Your Beautiful Smile</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="music">
+            <h2 class="section-title">Music for Us</h2>
+            <div class="music-player">
+                <p>"This song always reminds me of you and the moments we've shared."</p>
+                <div style="margin-top: 20px;">
+                    <audio id="romantic-song" loop>
+                        <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
+                    </audio>
+                    <button class="btn-hug" id="music-toggle" style="background: var(--sunset-purple);">Play Our Song 🎵</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="letter">
+            <h2 class="section-title">Open When You Miss Me</h2>
+            <div style="text-align: center;">
+                <p>Sometimes words aren't enough, but I hope this helps you feel my love today.</p>
+                <button class="btn-hug" id="open-letter">Open Letter ✉</button>
+                <div id="letter-display" class="letter-paper">
+                    <p>My Dearest Maleena,</p>
+                    <p>Every morning I wake up and the first thing I do is look at my phone, hoping for a message from you. Even though we are miles apart, you are the closest person to my heart. I miss the simple things—the way you laugh at my silly jokes, the way you look when you're thinking, and the warmth of your hand in mine.</p>
+                    <p>Distance is just a test to see how far love can travel. And my love for you travels across every ocean, every mountain, and every mile to be right there with you. Be patient, my love. Soon, we won't have to say goodbye anymore, only goodnight.</p>
+                    <p>I love you more than words can ever express.</p>
+                    <p style="text-align: right; margin-top: 40px;">Forever Yours,<br>Roashan ❤</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="reasons">
+            <h2 class="section-title">Reasons I Love You</h2>
+            <div class="reasons-grid">
+                <div class="reason-card">1. Your beautiful heart</div>
+                <div class="reason-card">2. Your infectious laugh</div>
+                <div class="reason-card">3. How you support me</div>
+                <div class="reason-card">4. Your kindness</div>
+                <div class="reason-card">5. Your intelligence</div>
+                <div class="reason-card">6. How you make me smile</div>
+                <div class="reason-card">7. Your amazing cooking</div>
+                <div class="reason-card">8. The way you look at me</div>
+                <div class="reason-card">9. Your strength</div>
+                <div class="reason-card">10. Because you are YOU</div>
+            </div>
+        </section>
+
+        <section id="promise">
+            <h2 class="section-title">No Matter The Distance</h2>
+            <div class="hug-card">
+                <p>I promise to stay loyal, to always be here for you, and to never stop loving you. Distance is temporary, but our love is forever. I am counting down every second until I see you again.</p>
+                <h1 style="margin-top: 50px; color: var(--sunset-pink);">Roashan ♥ Maleena</h1>
+            </div>
+        </section>
+    </main>
+
+    <button class="dark-mode-toggle" id="dark-toggle">🌙</button>
+
+    <footer style="text-align: center; padding: 50px 0; opacity: 0.6;">
+        <p>Made with all my love for Maleena. &copy; 2026</p>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

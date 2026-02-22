@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Letters - Our Love Space</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h1>Our Love Space</h1>
+            <ul>
+                <li><a href="dashboard.html">Home</a></li>
+                <li><a href="timeline.html">Timeline</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="memoryjar.html">Memory Jar</a></li>
+                <li><a href="letters.html">Letters</a></li>
+                <li><a href="goals.html">Goals</a></li>
+                <li><a href="visionboard.html">Vision Board</a></li>
+                <li><a href="settings.html">Settings</a></li>
+                <li><a href="#" id="logout-btn">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header style="margin-top: 50px; text-align: center;">
+            <h2>Love Letters</h2>
+            <button class="btn" style="background: var(--primary-color); color: white;" onclick="document.getElementById('modal').style.display='block'">Write a Letter</button>
+        </header>
+
+        <div class="grid" id="letters-container" style="margin-top: 30px;">
+            <!-- Letters will be injected here -->
+        </div>
+    </main>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span style="float: right; cursor: pointer; font-size: 2rem;" onclick="document.getElementById('modal').style.display='none'">&times;</span>
+            <h2>Write a Love Letter</h2>
+            <form id="letter-form">
+                <input type="text" id="title" placeholder="Title" required>
+                <textarea id="content" placeholder="Write your heart out..." style="height: 300px;" required></textarea>
+                <button type="submit" class="btn" style="width: 100%; background: var(--primary-color); color: white;">Save Letter</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="read-modal" class="modal">
+        <div class="modal-content" style="background: #fffdf9; border: 1px solid #ddd; padding: 40px; font-family: 'Georgia', serif;">
+            <span style="float: right; cursor: pointer; font-size: 2rem;" onclick="document.getElementById('read-modal').style.display='none'">&times;</span>
+            <h2 id="read-title" style="text-align: center;"></h2>
+            <p id="read-date" style="text-align: center; color: #888; font-size: 0.9rem;"></p>
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+            <div id="read-content" style="white-space: pre-wrap; line-height: 1.8; font-size: 1.1rem;"></div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        if (!api.getToken()) window.location.href = 'index.html';
+        document.getElementById('logout-btn').onclick = () => { api.clearToken(); window.location.href = 'index.html'; };
+
+        async function initLetters() {
+            const letters = await api.getLetters();
+            const container = document.getElementById('letters-container');
+            container.innerHTML = '';
+
+            letters.forEach(letter => {
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.innerHTML = `
+                    <h3>${letter.title}</h3>
+                    <p style="color: #888; font-size: 0.8rem;">${new Date(letter.createdAt).toLocaleDateString()}</p>
+                    <p style="margin-top: 10px;">${letter.content.substring(0, 100)}...</p>
+                    <button class="btn" onclick="readLetter('${letter._id}')" style="margin-top: 10px; background: var(--secondary-color); color: white; padding: 5px 15px; font-size: 0.8rem;">Read More</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        async function readLetter(id) {
+            const letter = await api.getLetter(id);
+            document.getElementById('read-title').textContent = letter.title;
+            document.getElementById('read-date').textContent = new Date(letter.createdAt).toLocaleDateString();
+            document.getElementById('read-content').textContent = letter.content;
+            document.getElementById('read-modal').style.display = 'block';
+        }
+
+        document.getElementById('letter-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+            await api.saveLetter(title, content);
+            document.getElementById('modal').style.display = 'none';
+            initLetters();
+        };
+
+        initLetters();
+    </script>
+</body>
+</html>

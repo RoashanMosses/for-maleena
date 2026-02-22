@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Jar - Our Love Space</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h1>Our Love Space</h1>
+            <ul>
+                <li><a href="dashboard.html">Home</a></li>
+                <li><a href="timeline.html">Timeline</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="memoryjar.html">Memory Jar</a></li>
+                <li><a href="letters.html">Letters</a></li>
+                <li><a href="goals.html">Goals</a></li>
+                <li><a href="visionboard.html">Vision Board</a></li>
+                <li><a href="settings.html">Settings</a></li>
+                <li><a href="#" id="logout-btn">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header style="margin-top: 50px; text-align: center;">
+            <h2>Our Memory Jar</h2>
+            <p>Write down a happy moment and put it in the jar.</p>
+        </header>
+
+        <div class="card" style="max-width: 600px; margin: 30px auto; text-align: center;">
+            <form id="memory-form">
+                <textarea id="memory-content" placeholder="Share a happy memory..." required></textarea>
+                <button type="submit" class="btn" style="background: var(--primary-color); color: white;">Add to Jar</button>
+            </form>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px;">
+            <button id="open-memory-btn" class="btn" style="background: var(--secondary-color); color: white; padding: 20px 40px; font-size: 1.5rem; border-radius: 50px;">Open a Memory ✨</button>
+        </div>
+
+        <div id="memory-jar-display" class="card" style="max-width: 600px; margin: 30px auto; display: none;">
+            <!-- Random memory will be injected here -->
+        </div>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script>
+        if (!api.getToken()) window.location.href = 'index.html';
+        document.getElementById('logout-btn').onclick = () => { api.clearToken(); window.location.href = 'index.html'; };
+
+        document.getElementById('memory-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const content = document.getElementById('memory-content').value;
+            await api.addMemory(content);
+            api.showHeart();
+            document.getElementById('memory-content').value = '';
+            alert('Memory added to the jar! ❤');
+        };
+
+        document.getElementById('open-memory-btn').onclick = async () => {
+            const memory = await api.getRandomMemory();
+            const display = document.getElementById('memory-jar-display');
+            
+            if (memory && memory.content) {
+                display.style.display = 'block';
+                display.style.opacity = 0;
+                display.innerHTML = `
+                    <p style="font-size: 1.5rem; font-style: italic;">"${memory.content}"</p>
+                    <p style="text-align: right; color: #888; font-size: 0.9rem;">- ${new Date(memory.createdAt).toLocaleDateString()}</p>
+                `;
+                setTimeout(() => {
+                    display.style.opacity = 1;
+                }, 100);
+            } else {
+                alert('The jar is empty. Add some memories first! ❤');
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery - Our Love Space</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h1>Our Love Space</h1>
+            <ul>
+                <li><a href="dashboard.html">Home</a></li>
+                <li><a href="timeline.html">Timeline</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="memoryjar.html">Memory Jar</a></li>
+                <li><a href="letters.html">Letters</a></li>
+                <li><a href="goals.html">Goals</a></li>
+                <li><a href="visionboard.html">Vision Board</a></li>
+                <li><a href="settings.html">Settings</a></li>
+                <li><a href="#" id="logout-btn">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header style="margin-top: 50px; text-align: center;">
+            <h2>Our Captured Moments</h2>
+            <button class="btn" style="background: var(--primary-color); color: white;" onclick="document.getElementById('modal').style.display='block'">Upload Photo</button>
+            <div style="margin-top: 20px;">
+                <label for="year-filter">Filter by Year:</label>
+                <select id="year-filter" style="width: 150px; display: inline-block;">
+                    <option value="">All Years</option>
+                    <option value="2026">2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                </select>
+            </div>
+        </header>
+
+        <div class="grid" id="gallery-container" style="margin-top: 30px;">
+            <!-- Photos will be injected here -->
+        </div>
+    </main>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span style="float: right; cursor: pointer; font-size: 2rem;" onclick="document.getElementById('modal').style.display='none'">&times;</span>
+            <h2>Upload Photo</h2>
+            <form id="gallery-form">
+                <input type="text" id="caption" placeholder="Caption">
+                <input type="text" id="year" placeholder="Year (e.g. 2026)" required>
+                <input type="file" id="image" accept="image/*" required>
+                <button type="submit" class="btn" style="width: 100%; background: var(--primary-color); color: white;">Upload</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        if (!api.getToken()) window.location.href = 'index.html';
+        document.getElementById('logout-btn').onclick = () => { api.clearToken(); window.location.href = 'index.html'; };
+
+        async function initGallery(year = '') {
+            const photos = await api.getGallery(year);
+            const container = document.getElementById('gallery-container');
+            container.innerHTML = '';
+
+            photos.forEach(photo => {
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.style.padding = '10px';
+                div.innerHTML = `
+                    <img src="${photo.imageUrl}" style="width: 100%; border-radius: 10px; cursor: pointer;" onclick="window.open('${photo.imageUrl}', '_blank')">
+                    <p style="margin-top: 10px; font-weight: bold;">${photo.caption || ''}</p>
+                    <p style="font-size: 0.8rem; color: #888;">${photo.year || ''}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        document.getElementById('gallery-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('caption', document.getElementById('caption').value);
+            formData.append('year', document.getElementById('year').value);
+            const image = document.getElementById('image').files[0];
+            if (image) formData.append('image', image);
+
+            await api.uploadPhoto(formData);
+            api.showHeart();
+            document.getElementById('modal').style.display = 'none';
+            initGallery();
+        };
+
+        document.getElementById('year-filter').onchange = (e) => {
+            initGallery(e.target.value);
+        };
+
+        initGallery();
+    </script>
+</body>
+</html>

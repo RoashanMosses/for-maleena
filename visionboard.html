@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vision Board - Our Love Space</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h1>Our Love Space</h1>
+            <ul>
+                <li><a href="dashboard.html">Home</a></li>
+                <li><a href="timeline.html">Timeline</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="memoryjar.html">Memory Jar</a></li>
+                <li><a href="letters.html">Letters</a></li>
+                <li><a href="goals.html">Goals</a></li>
+                <li><a href="visionboard.html">Vision Board</a></li>
+                <li><a href="settings.html">Settings</a></li>
+                <li><a href="#" id="logout-btn">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header style="margin-top: 50px; text-align: center;">
+            <h2>Our Future Dreams</h2>
+            <button class="btn" style="background: var(--primary-color); color: white;" onclick="document.getElementById('modal').style.display='block'">Add to Vision Board</button>
+        </header>
+
+        <div class="grid" id="vision-container" style="margin-top: 30px;">
+            <!-- Vision items will be injected here -->
+        </div>
+    </main>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span style="float: right; cursor: pointer; font-size: 2rem;" onclick="document.getElementById('modal').style.display='none'">&times;</span>
+            <h2>Add Future Dream</h2>
+            <form id="vision-form">
+                <input type="text" id="caption" placeholder="Description/Dream" required>
+                <input type="file" id="image" accept="image/*" required>
+                <button type="submit" class="btn" style="width: 100%; background: var(--primary-color); color: white;">Save to Board</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        if (!api.getToken()) window.location.href = 'index.html';
+        document.getElementById('logout-btn').onclick = () => { api.clearToken(); window.location.href = 'index.html'; };
+
+        async function initVisionBoard() {
+            const items = await api.getVisionBoard();
+            const container = document.getElementById('vision-container');
+            container.innerHTML = '';
+
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.style.padding = '10px';
+                div.innerHTML = `
+                    <img src="${item.imageUrl}" style="width: 100%; border-radius: 10px;">
+                    <p style="margin-top: 10px; font-weight: bold; text-align: center;">${item.caption}</p>
+                    <button class="btn" onclick="deleteVisionItem('${item._id}')" style="background: #ff6b6b; color: white; padding: 5px 15px; font-size: 0.8rem; border-radius: 5px; margin-top: 10px; width: 100%;">Remove</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        async function deleteVisionItem(id) {
+            if (confirm('Remove this item?')) {
+                await api.deleteVisionItem(id);
+                initVisionBoard();
+            }
+        }
+
+        document.getElementById('vision-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('caption', document.getElementById('caption').value);
+            const image = document.getElementById('image').files[0];
+            if (image) formData.append('image', image);
+
+            await api.addVisionItem(formData);
+            document.getElementById('modal').style.display = 'none';
+            initVisionBoard();
+        };
+
+        initVisionBoard();
+    </script>
+</body>
+</html>

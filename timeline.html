@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeline - Our Love Space</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h1>Our Love Space</h1>
+            <ul>
+                <li><a href="dashboard.html">Home</a></li>
+                <li><a href="timeline.html">Timeline</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="memoryjar.html">Memory Jar</a></li>
+                <li><a href="letters.html">Letters</a></li>
+                <li><a href="goals.html">Goals</a></li>
+                <li><a href="visionboard.html">Vision Board</a></li>
+                <li><a href="settings.html">Settings</a></li>
+                <li><a href="#" id="logout-btn">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header style="margin-top: 50px; text-align: center;">
+            <h2>Our Milestone Journey</h2>
+            <button class="btn" style="background: var(--primary-color); color: white;" onclick="document.getElementById('modal').style.display='block'">Add New Milestone</button>
+        </header>
+
+        <div class="timeline" id="timeline-container">
+            <!-- Timeline items will be injected here -->
+        </div>
+    </main>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span style="float: right; cursor: pointer; font-size: 2rem;" onclick="document.getElementById('modal').style.display='none'">&times;</span>
+            <h2>Add New Milestone</h2>
+            <form id="timeline-form">
+                <input type="text" id="title" placeholder="Event Title" required>
+                <textarea id="description" placeholder="Description"></textarea>
+                <input type="date" id="eventDate" required>
+                <input type="file" id="image" accept="image/*">
+                <button type="submit" class="btn" style="width: 100%; background: var(--primary-color); color: white;">Save Milestone</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        if (!api.getToken()) window.location.href = 'index.html';
+        document.getElementById('logout-btn').onclick = () => { api.clearToken(); window.location.href = 'index.html'; };
+
+        async function initTimeline() {
+            const milestones = await api.getTimeline();
+            const container = document.getElementById('timeline-container');
+            container.innerHTML = '';
+
+            milestones.forEach((item, index) => {
+                const side = index % 2 === 0 ? 'left' : 'right';
+                const div = document.createElement('div');
+                div.className = `timeline-item ${side}`;
+                div.innerHTML = `
+                    <div class="card">
+                        <h3>${item.title}</h3>
+                        <p style="font-size: 0.9rem; color: #888;">${new Date(item.eventDate).toLocaleDateString()}</p>
+                        ${item.imageUrl ? `<img src="${item.imageUrl}" style="width: 100%; border-radius: 10px; margin: 10px 0;">` : ''}
+                        <p>${item.description}</p>
+                        <button class="btn" onclick="deleteMilestone('${item._id}')" style="background: #ff6b6b; color: white; padding: 5px 15px; font-size: 0.8rem; border-radius: 5px; margin-top: 10px;">Delete</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        async function deleteMilestone(id) {
+            if (confirm('Delete this milestone?')) {
+                await api.deleteMilestone(id);
+                initTimeline();
+            }
+        }
+
+        document.getElementById('timeline-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('title', document.getElementById('title').value);
+            formData.append('description', document.getElementById('description').value);
+            formData.append('eventDate', document.getElementById('eventDate').value);
+            const image = document.getElementById('image').files[0];
+            if (image) formData.append('image', image);
+
+            await api.addMilestone(formData);
+            api.showHeart();
+            document.getElementById('modal').style.display = 'none';
+            initTimeline();
+        };
+
+        initTimeline();
+    </script>
+</body>
+</html>

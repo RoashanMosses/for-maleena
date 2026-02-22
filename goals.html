@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goals - Our Love Space</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h1>Our Love Space</h1>
+            <ul>
+                <li><a href="dashboard.html">Home</a></li>
+                <li><a href="timeline.html">Timeline</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="memoryjar.html">Memory Jar</a></li>
+                <li><a href="letters.html">Letters</a></li>
+                <li><a href="goals.html">Goals</a></li>
+                <li><a href="visionboard.html">Vision Board</a></li>
+                <li><a href="settings.html">Settings</a></li>
+                <li><a href="#" id="logout-btn">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header style="margin-top: 50px; text-align: center;">
+            <h2>Our Shared Goals</h2>
+            <button class="btn" style="background: var(--primary-color); color: white;" onclick="document.getElementById('modal').style.display='block'">Add New Goal</button>
+        </header>
+
+        <div class="grid" id="goals-container" style="margin-top: 30px;">
+            <!-- Goals will be injected here -->
+        </div>
+    </main>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span style="float: right; cursor: pointer; font-size: 2rem;" onclick="document.getElementById('modal').style.display='none'">&times;</span>
+            <h2>Add New Goal</h2>
+            <form id="goal-form">
+                <input type="text" id="title" placeholder="Goal Title" required>
+                <input type="date" id="targetDate" placeholder="Target Date">
+                <input type="number" id="progress" placeholder="Progress (%)" min="0" max="100" value="0">
+                <button type="submit" class="btn" style="width: 100%; background: var(--primary-color); color: white;">Save Goal</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        if (!api.getToken()) window.location.href = 'index.html';
+        document.getElementById('logout-btn').onclick = () => { api.clearToken(); window.location.href = 'index.html'; };
+
+        async function initGoals() {
+            const goals = await api.getGoals();
+            const container = document.getElementById('goals-container');
+            container.innerHTML = '';
+
+            goals.forEach(goal => {
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.innerHTML = `
+                    <h3>${goal.title}</h3>
+                    <p style="color: #888; font-size: 0.8rem;">Target Date: ${goal.targetDate ? new Date(goal.targetDate).toLocaleDateString() : 'N/A'}</p>
+                    <div class="progress-container" style="margin: 15px 0;">
+                        <div class="progress-bar" style="width: ${goal.progress}%">${goal.progress}%</div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" onclick="updateProgress('${goal._id}', ${goal.progress})" style="background: var(--secondary-color); color: white; padding: 5px 15px; font-size: 0.8rem;">Update Progress</button>
+                        <button class="btn" onclick="deleteGoal('${goal._id}')" style="background: #ff6b6b; color: white; padding: 5px 15px; font-size: 0.8rem;">Delete</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        async function updateProgress(id, current) {
+            const newProgress = prompt('Update progress %:', current);
+            if (newProgress !== null) {
+                await api.updateGoal(id, { progress: Number(newProgress) });
+                initGoals();
+            }
+        }
+
+        async function deleteGoal(id) {
+            if (confirm('Delete this goal?')) {
+                await api.deleteGoal(id);
+                initGoals();
+            }
+        }
+
+        document.getElementById('goal-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('title').value;
+            const targetDate = document.getElementById('targetDate').value;
+            const progress = document.getElementById('progress').value;
+            await api.addGoal(title, targetDate, progress);
+            document.getElementById('modal').style.display = 'none';
+            initGoals();
+        };
+
+        initGoals();
+    </script>
+</body>
+</html>
